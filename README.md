@@ -21,7 +21,7 @@ def c(b=b, c=(10, 20)):
     print(f"C: {c}")
 ```
 
-Corresponds roughly to native ipywigdets:
+Corresponds roughly to native ipywidgets:
 
 ```py
 from ipywidgets import interact, interact_manual
