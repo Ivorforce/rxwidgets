@@ -42,8 +42,8 @@ An incomprehensive feature list is provided in the `examples` folder.
 
 A function stream consists of these steps:
 
-1. `@rxi.stream`
-   - Convert parameters into observables - may display ipywidgets.
+1. `@rxi.stream_defaults`
+   - Convert parameter defaults into observables - may display ipywidgets.
    - Convert function into a stream of its results from input streams.
    - In stream: Curry the function and make wrap into a `ValueBox`.
    - Object in stream: `ValueBox(partial(fn, ...))`
