@@ -36,7 +36,9 @@ def function(fun, *, strict=True) -> Callable[..., ValueBox]:
         try:
             args_unboxed, kwargs_unboxed = unbox_parameters(args, kwargs, strict=strict)
 
-            return ValueBox(fun(*args_unboxed, **kwargs_unboxed), is_error=False)
+            result = fun(*args_unboxed, **kwargs_unboxed)
+
+            return ValueBox(result)
         except Exception as e:
             return ValueBox(e, is_error=True)
     return fun_boxed
