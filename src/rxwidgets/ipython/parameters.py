@@ -13,18 +13,6 @@ from rxwidgets.decorators import optional_arg_decorator
 Policy = Literal['just', 'interact']
 
 
-def named_args(bind: inspect.BoundArguments) -> List[Tuple[Optional[str], Any]]:
-    arg_names = []
-    for name, param in bind.signature.parameters.items():
-        if param.kind == param.VAR_POSITIONAL:
-            # None for the rest of the names
-            arg_names += [None] * (len(bind.args) - len(arg_names))
-            break
-        arg_names.append(name)
-
-    return list(zip(arg_names, bind.args))
-
-
 def as_observable(x, name: str = None, *, policy: Policy = 'just'):
     from .widgets import subject_observing_widget
 
