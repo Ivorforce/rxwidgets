@@ -1,0 +1,62 @@
+import rxwidgets.rx as rxn
+
+from rxwidgets.ipython.stream import apply, stream
+from rxwidgets.ipython.defer import defer
+from .voodoo import voodoo
+
+
+def interact(fn, **kwargs) -> rxn.VoodooObservable:
+    """
+    Convenience function to ease the transition from `ipywidgets.interact`.
+
+    If you want to add more sophisticated functionality, like pre-loading
+    for slow functions or customized run buttons, use this instead:
+
+    ```
+    @rxi.apply
+    @rxi.stream
+    @rxi.parameters
+    def fn(...):
+        pass
+    ```
+
+    Examples:
+        ```
+        @rxi.interact
+        def fn(...):
+            pass
+        ```
+    """
+    observable = stream(fn, policy='interact', kwargs=kwargs)
+    observable = apply(observable)
+
+    return voodoo(observable)
+
+
+def interact_manual(fn, **kwargs) -> rxn.VoodooObservable:
+    """
+    Convenience function to ease the transition from `ipywidgets.interact_manual`.
+
+    If you want to add more sophisticated functionality, like pre-loading
+    for slow functions or customized run buttons, use this instead:
+    ```
+    @rxi.apply
+    @rxi.defer
+    @rxi.stream
+    @rxi.parameters
+    def fn(...):
+        pass
+    ```
+
+    Examples:
+        ```
+        @rxi.interact_manual
+        def fn(...):
+            pass
+        ```
+    """
+    observable = stream(fn, policy='interact', kwargs=kwargs)
+    observable = defer(observable)
+    observable = apply(observable)
+
+    return voodoo(observable)
