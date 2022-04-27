@@ -1,6 +1,6 @@
 import rxwidgets.rx as rxn
 
-from rxwidgets.ipython.stream import apply, stream
+from rxwidgets.ipython.stream import apply, stream_defaults
 from rxwidgets.ipython.defer import defer
 from .voodoo import voodoo
 
@@ -27,7 +27,7 @@ def interact(fn, **kwargs) -> rxn.VoodooObservable:
             pass
         ```
     """
-    observable = stream(fn, policy='interact', kwargs=kwargs)
+    observable = stream_defaults(fn, policy='interact', kwargs=kwargs)
     observable = apply(observable)
 
     return voodoo(observable)
@@ -55,7 +55,7 @@ def interact_manual(fn, **kwargs) -> rxn.VoodooObservable:
             pass
         ```
     """
-    observable = stream(fn, policy='interact', kwargs=kwargs)
+    observable = stream_defaults(fn, policy='interact', kwargs=kwargs)
     observable = defer(observable)
     observable = apply(observable)
 

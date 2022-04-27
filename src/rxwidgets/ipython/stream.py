@@ -80,25 +80,35 @@ def apply(observable: rx.Observable, *, screen: Screen = None) -> rx.Observable:
     return subject
 
 
+def curry_fn_valueboxed(fn, *args, **kwargs) -> valuebox.ValueBox:
+    try:
+        args, kwargs = valuebox.unbox_parameters(args, kwargs, strict=False)
+    except Exception as e:
+        # Unboxing failed; we can't run fn later. Just pass on whatever error we found.
+        return valuebox.ValueBox(e, is_error=True)
+
+    # No errors, we can run the function later.
+    return valuebox.ValueBox(functools.partial(fn, *args, **kwargs))
+
+
 @optional_arg_decorator
-def stream(fn: Callable, policy: parameters.Policy = 'interact', *, kwargs: dict = None) -> rx.Observable:
+def stream_defaults(fn: Callable, policy: parameters.Policy = 'interact', kwargs: dict = None) -> rx.Observable:
     fn = parameters.defaults_to_observables(fn, policy=policy, kwargs=kwargs)
-
-    """Convert the function into a stream of results from each changing parameter."""
-    def curry_fn_valueboxed(*args, **kwargs) -> valuebox.ValueBox:
-        try:
-            args, kwargs = valuebox.unbox_parameters(args, kwargs, strict=False)
-        except Exception as e:
-            # Unboxing failed; we can't run fn later. Just pass on whatever error we found.
-            return valuebox.ValueBox(e, is_error=True)
-
-        # No errors, we can run the function later.
-        return valuebox.ValueBox(functools.partial(fn, *args, **kwargs))
 
     # Pack the function to a partial
     sig = inspect.signature(fn)
     bind = sig.bind()
     bind.apply_defaults()
-    observable = rxn.call_latest(*bind.args, **bind.kwargs)(rx.just(curry_fn_valueboxed))
+    observable = rxn.call_latest(
+        rx.just(fn), *bind.args, **bind.kwargs
+    )(rx.just(curry_fn_valueboxed))
 
     return observable
+
+
+def stream_binding(fn: Callable, *args, **kwargs: dict) -> rx.Observable:
+    return rxn.call_latest(
+        rx.just(fn),
+        *tuple(map(parameters.as_observable, args)),
+        **{key: parameters.as_observable(val) for key, val in kwargs.items()}
+    )(rx.just(curry_fn_valueboxed))

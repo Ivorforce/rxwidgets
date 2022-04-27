@@ -8,7 +8,6 @@ from IPython.display import display
 from ipywidgets import interactive
 
 from rxwidgets.decorators import optional_arg_decorator
-from rxwidgets.ipython.widgets import subject_observing_widget
 
 
 Policy = Literal['just', 'interact']
@@ -26,7 +25,9 @@ def named_args(bind: inspect.BoundArguments) -> List[Tuple[Optional[str], Any]]:
     return list(zip(arg_names, bind.args))
 
 
-def as_observable(x, name: str = None, *, policy: Policy = 'interact'):
+def as_observable(x, name: str = None, *, policy: Policy = 'just'):
+    from .widgets import subject_observing_widget
+
     if isinstance(x, ipywidgets.ValueWidget):
         display(x)
         return subject_observing_widget(x)
@@ -37,6 +38,9 @@ def as_observable(x, name: str = None, *, policy: Policy = 'interact'):
     if policy == 'just':
         return rx.just(x)
     elif policy == 'interact':
+        if name is None:
+            raise ValueError("Cannot convert to interactive widget without a name.")
+
         def mock_function(x):
             pass
 
@@ -61,6 +65,8 @@ def defaults_to_observables(fn: Callable, policy: Policy = 'interact', *, kwargs
     kwargs = kwargs or dict()
 
     sig = inspect.signature(fn)
+    # Just a sanity check that no unknown kwargs have been passed
+    sig.bind_partial(**kwargs)
     fn_copy = functools.partial(fn)
 
     fn_copy.__signature__ = sig.replace(
