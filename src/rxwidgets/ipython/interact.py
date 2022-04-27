@@ -14,8 +14,7 @@ def interact(fn, **kwargs) -> rxn.VoodooObservable:
 
     ```
     @rxi.apply
-    @rxi.stream
-    @rxi.parameters
+    @rxi.stream_defaults
     def fn(...):
         pass
     ```
@@ -42,8 +41,7 @@ def interact_manual(fn, **kwargs) -> rxn.VoodooObservable:
     ```
     @rxi.apply
     @rxi.defer
-    @rxi.stream
-    @rxi.parameters
+    @rxi.stream_defaults
     def fn(...):
         pass
     ```
