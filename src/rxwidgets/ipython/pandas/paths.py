@@ -65,6 +65,10 @@ def select(
 
     left_output = ipywidgets.Output()
     right_screen = rxi.Screen()
+    # Display first in case errors are thrown
+    display(ipywidgets.HBox(
+        children=(left_output, right_screen.widget)
+    ))
 
     with left_output:
         df_stream = rxi.pandas.dataframe.filter(
@@ -82,9 +86,6 @@ def select(
             rows=2 + 2 * len(df.columns)
         ),
         screen=right_screen
-    ))
-    display(ipywidgets.HBox(
-        children=(left_output, right_screen.widget)
     ))
 
     return df_stream
