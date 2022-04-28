@@ -56,12 +56,13 @@ def select(
 
     scheme_parts = Path(scheme).parts if scheme is not None else []
     required_path_len = len(scheme_parts) if require_full_scheme else 0
+    path_parts = [name for name in scheme_parts if name != "_"]
 
     df = pd.DataFrame([
         path_to_dict(path, scheme_parts=scheme_parts)
         for path in map(Path, paths)
         if len(path.parts) >= required_path_len
-    ])
+    ], columns=['path', *path_parts])
 
     left_output = ipywidgets.Output()
     right_screen = rxi.Screen()
@@ -73,7 +74,7 @@ def select(
     with left_output:
         df_stream = rxi.pandas.dataframe.filter(
             df,
-            columns=[name for name in scheme_parts if name != "_"],
+            columns=path_parts,
             search_columns=['path'],
             search_index=False
         )
