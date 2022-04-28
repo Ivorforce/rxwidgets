@@ -33,6 +33,7 @@ def filter_dataframe(
 ) -> rx.Observable:
     """
     Filter the dataframe interactively, returning a stream of results.
+    Filtering is done with search fields and dropdowns.
 
     Examples:
         ```
