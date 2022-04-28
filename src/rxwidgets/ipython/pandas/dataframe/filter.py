@@ -23,12 +23,12 @@ def widget_set_options(ui: ipywidgets.widgets.widget_selection._Selection, optio
         ui.value = value
 
 
-def filter_dataframe(
+def filter(
     dataframe: pd.DataFrame,
     *,
     show_reset_button=True,
     columns=...,
-    index_search=True,
+    search_index=True,
     search_columns=...,
 ) -> rx.Observable:
     """
@@ -43,6 +43,10 @@ def filter_dataframe(
         ))
         ```
     """
+    subject = rx.subject.ReplaySubject(1)
+    # Will always start with the full dataframe
+    subject.on_next(dataframe)
+
     dataframe = dataframe.copy()
     supress_changes = AnyContext()
 
@@ -53,9 +57,6 @@ def filter_dataframe(
         columns = dataframe.columns
 
     widgets = list()
-    subject = rx.subject.ReplaySubject(1)
-    # Will always start with the full dataframe
-    subject.on_next(dataframe)
 
     search_textfield = None
     index_textfield = None
@@ -73,7 +74,7 @@ def filter_dataframe(
         if index_textfield is not None and index_textfield.value:
             df = df[df["__index_search"].str.contains(index_textfield.value)]
 
-        return df.drop(columns=["__search", "__index_search"])
+        return df.drop(columns=["__search", "__index_search"], errors='ignore')
 
     def on_change(change=None):
         if supress_changes:
@@ -89,7 +90,7 @@ def filter_dataframe(
         search_textfield.observe(on_change, 'value')
         widgets.append(search_textfield)
 
-    if index_search:
+    if search_index:
         dataframe["__index_search"] = dataframe.index.astype(str)
 
         index_textfield = make_index_widget(dataframe)

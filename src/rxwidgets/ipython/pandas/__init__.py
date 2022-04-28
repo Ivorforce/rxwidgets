@@ -1,2 +1,2 @@
-from .filter_dataframe import filter_dataframe
-from .select_row import select_row
+from . import dataframe, paths
+from .paths import select
