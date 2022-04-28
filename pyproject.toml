@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "reactive-widgets"
+name = "rxwidgets"
 version = "0.1.0"
 description = "iPython notebooks with reactive UI - powered by RxPy and ipywidgets"
 authors = ["Lukas Tenbrink <lukas.tenbrink@gmail.com>"]
@@ -11,12 +11,9 @@ packages = [
 python = ">=3.8,<3.11"
 reactivex = "^4.0.0"
 ipywidgets = "^7.6.3"
-more-itertools = "^8.5.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.2"
-plotly = "^5.7.0"
-matplotlib = "^3.5.1"
 pandas = "^1.4.2"
 
 [build-system]
