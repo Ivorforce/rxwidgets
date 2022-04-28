@@ -3,12 +3,24 @@ from typing import List, Callable, Dict
 
 import pandas as pd
 import reactivex as rx
-import ipywidgets
+import ipywidgets.widgets
 
 from rxwidgets.contexts import AnyContext
 from rxwidgets.ipython.display import display
 
 _none_selected = object()
+
+
+def widget_set_options(ui: ipywidgets.widgets.widget_selection._Selection, options):
+    # Unfortunately, the UI isn't good at doing this itself
+    #  Can maybe remove extra checks in a future version
+    if options == ui.options:
+        return
+
+    value = ui.value
+    with ui.hold_sync():
+        ui.options = options
+        ui.value = value
 
 
 def filter_dataframe(
@@ -137,7 +149,7 @@ def make_column_widgets(
     if missing_columns:
         raise ValueError(f"Columns not in dataframe: {missing_columns}")
 
-    column_dropdowns = OrderedDict()
+    column_dropdowns: Dict[str, ipywidgets.Dropdown] = OrderedDict()
     is_updating_context = AnyContext()
 
     def filtered_dataframe(*, but: str = None):
@@ -154,12 +166,10 @@ def make_column_widgets(
             df_filtered = filtered_dataframe(but=column)
             options = sorted(set(df_filtered[column]))
 
-            current_value = dropdown.value
-            dropdown.options = [
+            widget_set_options(dropdown, options=[
                 ("/", _none_selected),
                 *((str(val), val) for val in options)
-            ]
-            dropdown.value = current_value
+            ])
 
     def on_dropdown_change(change):
         if is_updating_context:
