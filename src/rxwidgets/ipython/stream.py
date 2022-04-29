@@ -27,38 +27,25 @@ def apply(observable: rx.Observable, *, screen: Screen = None) -> rx.Observable:
         display(screen.widget)
 
     def run_fn(box: valuebox.ValueBox) -> valuebox.ValueBox:
-        if not box.is_error:
-            # Found a partial in a box, now run it.
-            with screen():
-                result = box.value()
+        with screen():
+            try:
+                fn = box.unbox()
+                result = fn()
                 screen.is_loading = False
 
                 # Got result without any errors.
                 return valuebox.ValueBox(result)
-
-            # Function raised and the error has been rendered.
-            # Pass on a consequential error.
-            screen.is_loading = False
-            return valuebox.ValueBox(ConsequentialError(), is_error=True)
-
-        # Found an error, either from a parameter, a defer or loading error from ourselves.
-
-        # This will clear our screen and render any non-caught errors.
-        with screen():
-            try:
-                box.unbox()
-                # Unreachable
             except LoadingError:
-                # Pass on the loading error, render nothing.
+                # Pass on the loading error, render nothing. If not yet, show loading indicator.
                 screen.is_loading = True
                 return box
             except (DeferError, ConsequentialError):
-                # Render nothing, pass on the same error.
+                # Pass on the error, render nothing.
                 screen.is_loading = False
                 return box
 
-        # Generic error from a previous function has been found.
-        # Pass on a consequential error.
+        # Either the function, or the unboxing, raised and the error has been rendered.
+        # Now pass on a consequential error.
         screen.is_loading = False
         return valuebox.ValueBox(ConsequentialError(), is_error=True)
 
