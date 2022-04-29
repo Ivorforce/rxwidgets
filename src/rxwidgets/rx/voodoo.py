@@ -75,27 +75,30 @@ class VoodooObservable(rx.abc.ObservableBase):
 
 # Register All Operators
 
-def make_operator(__op__: str, reverse=False):
-    native_op = getattr(operator, __op__)
+def _monkey_patch_operators():
+    def make_operator(fn: Callable, reverse=False):
+        def function(self: VoodooObservable, *args):
+            args = (self.stream, *args)
 
-    def method(self: VoodooObservable, *args):
-        args = (self.stream, *args)
+            return self.map(
+                fn,
+                *(args[::-1] if reverse else args)
+            )
 
-        return self.map(
-            native_op,
-            *(args[::-1] if reverse else args)
-        )
+        return function
 
-    return method
+    operators = set(filter(lambda op: op.startswith('__'), dir(operator)))
+    operators -= {'__name__'}
+
+    for fn_name in operators:
+        fn = getattr(operator, fn_name)
+
+        setattr(VoodooObservable, fn_name, make_operator(fn))
+
+        # register also the reverse version, eg. __radd__
+        # TODO this of course registers a bunch of nonsense like __rabs__.
+        reverse_fn_name = f'__r{fn_name[2:]}'
+        setattr(VoodooObservable, reverse_fn_name, make_operator(fn, reverse=True))
 
 
-__op__s = set(filter(lambda op: op.startswith('__'), dir(operator)))
-__op__s -= {'__name__'}
-
-for __op__ in __op__s:
-    setattr(VoodooObservable, __op__, make_operator(__op__))
-    # register also __radd__ for example for 1 + node to work
-    # this of course registers a bunch of nonsense like __rabs__
-    # but that's not a problem
-    __rop__ = f'__r{__op__[2:]}'
-    setattr(VoodooObservable, __rop__, make_operator(__op__, reverse=True))
+_monkey_patch_operators()
