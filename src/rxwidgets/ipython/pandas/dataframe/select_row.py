@@ -20,7 +20,7 @@ def _row_to_label(row):
 def select_row(
     dataframe: pd.DataFrame,
     *,
-    descripton="",
+    description="",
     multi=False,
     rows=15,
     max_rows=1000,
@@ -53,7 +53,7 @@ def select_row(
 
     Component = ipywidgets.SelectMultiple if multi else ipywidgets.Select
     select: ipywidgets.widgets.widget_selection._Selection = Component(
-        description=descripton,
+        description=description,
         options=options,
         rows=rows,
         layout={'width': 'max-content'}
