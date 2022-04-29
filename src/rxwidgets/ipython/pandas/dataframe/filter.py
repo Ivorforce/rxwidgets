@@ -82,18 +82,22 @@ def filter(
         subject.on_next(filtered_dataframe())
 
     if search_columns is not None:
-        dataframe["__search"] = dataframe[search_columns].apply(
-            (lambda x: "\t".join(map(str, x))), axis=1
+        dataframe["__search"] = dataframe[search_columns].astype(str).apply(
+            (lambda x: "\t".join(x)), axis=1
         )
 
-        search_textfield = make_search_widget()
+        search_textfield = ipywidgets.Text(description="Search")
         search_textfield.observe(on_change, 'value')
         widgets.append(search_textfield)
 
     if search_index:
-        dataframe["__index_search"] = dataframe.index.astype(str)
+        dataframe["__index_search"] = index_as_string = dataframe.index.astype(str)
 
-        index_textfield = make_index_widget(dataframe)
+        index_name = dataframe.index.name or "Index"
+        index_textfield = ipywidgets.Combobox(
+            description=index_name,
+            options=list(index_as_string)
+        )
         index_textfield.observe(on_change, 'value')
         widgets.append(index_textfield)
 
@@ -125,20 +129,6 @@ def filter(
     display(vbox)
 
     return subject
-
-
-def make_search_widget() -> ipywidgets.Text:
-    search_textfield = ipywidgets.Text(description="Search")
-    return search_textfield
-
-
-def make_index_widget(dataframe) -> ipywidgets.Text:
-    index_name = dataframe.index.name or "Index"
-    index_textfield = ipywidgets.Combobox(
-        description=index_name,
-        options=list(dataframe.index.astype(str))
-    )
-    return index_textfield
 
 
 def make_column_widgets(
