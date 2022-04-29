@@ -1,4 +1,6 @@
 import operator
+from typing import Callable, Any
+
 import reactivex as rx
 
 from .call import call_latest
@@ -7,6 +9,7 @@ from .call import call_latest
 class VoodooObservable(rx.abc.ObservableBase):
     """
     An object wrapping a stream that will map each of its operations to the objects in the stream.
+
     Examples:
         ```
         x = VoodooObservable(rx.just(5)) * 2 + 5
@@ -20,10 +23,16 @@ class VoodooObservable(rx.abc.ObservableBase):
 
     def __init__(
         self,
-        stream,
-        call=None,
-        to_observable=None,
+        stream: rx.abc.ObservableBase,
+        call: Callable[[Callable], Callable] = None,
+        to_observable: Callable[[Any], rx.Observable] = None,
     ):
+        """
+        Args:
+            stream: The stream to wrap.
+            call: Decorator for functions.
+            to_observable: A function to convert an argument to an observable.
+        """
         self.__stream__ = stream.stream if isinstance(stream, VoodooObservable) else stream
         self.__caller__ = call
         self.__to_observable__ = to_observable

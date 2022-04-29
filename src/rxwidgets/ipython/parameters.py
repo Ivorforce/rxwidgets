@@ -8,17 +8,33 @@ from IPython.display import display
 from ipywidgets import interactive
 
 from rxwidgets.decorators import optional_arg_decorator
-
+from rxwidgets.rx import VoodooObservable
 
 Policy = Literal['just', 'interact']
 
 
-def as_observable(x, name: str = None, *, policy: Policy = 'just'):
+def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.abc.ObservableBase:
+    """
+    Convert x to an observable, raising if impossible.
+
+    Args:
+        x: The object to convert.
+        name: The name to use, if the policy requires.
+        policy: The policy to use for ambiguous objects.
+
+    Raises:
+        `ValueError` on inconvertible objects.
+
+    Returns: An observable.
+    """
     from .widgets import subject_observing_widget
 
     if isinstance(x, ipywidgets.ValueWidget):
         display(x)
         return subject_observing_widget(x)
+
+    if isinstance(x, VoodooObservable):
+        return x.stream
 
     if isinstance(x, rx.abc.ObservableBase):
         return x
@@ -48,8 +64,20 @@ def as_observable(x, name: str = None, *, policy: Policy = 'just'):
 
 
 @optional_arg_decorator
-def defaults_to_observables(fn: Callable, policy: Policy = 'interact', *, kwargs: dict = None):
-    """Convert defaults of parameters to streams."""
+def defaults_to_observables(fn: Callable, policy: Policy = 'interact', *, kwargs: dict = None) -> Callable:
+    """
+    Convert defaults of the function to observables.
+
+    Args:
+        fn: The function to modify
+        policy: The policy to apply for ambiguous objects.
+        kwargs: Overrides for any parameter defaults for conversion.
+
+    Raises:
+        `ValueError` on inconvertible objects.
+
+    Returns: A version of the function with the same arguments, but defaults changed to all `rx.observable`.
+    """
     kwargs = kwargs or dict()
 
     sig = inspect.signature(fn)

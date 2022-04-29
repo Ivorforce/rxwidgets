@@ -3,6 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class AnyContext:
+    """
+    A simple context that does nothing but count how often it's been entered vs. exited.
+    """
     count: int = 0
 
     def __enter__(self):

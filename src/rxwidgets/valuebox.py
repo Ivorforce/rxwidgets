@@ -6,6 +6,9 @@ from rxwidgets.decorators import optional_arg_decorator
 
 @dataclass
 class ValueBox:
+    """
+    A simple wrapper for either objects or Exceptions. Call .unbox() to find out which!
+    """
     value: Any
     is_error: bool = False
 
@@ -16,6 +19,15 @@ class ValueBox:
 
 
 def unbox_parameters(args, kwargs, *, strict=True):
+    """
+    Unbox args and kwargs.
+
+    Args:
+        strict: If true, raise if any argument is not a `ValueBox`.
+            If False, treat as if they were `ValueBox(value)`.
+
+    Returns: args, kwargs
+    """
     def convert(arg):
         if not isinstance(arg, ValueBox):
             if strict:

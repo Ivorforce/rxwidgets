@@ -21,7 +21,13 @@ class ConsequentialError(Exception):
 
 @optional_arg_decorator
 def apply(observable: rx.Observable, *, screen: Screen = None) -> rx.Observable:
-    """Map the stream by applying the underlying valuebox'd function."""
+    """
+    Map the stream by applying the underlying valuebox'd function.
+
+    Args:
+        observable: A stream of `ValueBox(Callable[[], Any])`
+        screen: If provided, apply the function in this screen.
+    """
     if screen is None:
         screen = Screen()
         display(screen.widget)
@@ -68,6 +74,11 @@ def apply(observable: rx.Observable, *, screen: Screen = None) -> rx.Observable:
 
 
 def curry_fn_valueboxed(fn, *args, **kwargs) -> valuebox.ValueBox:
+    """
+    Curry the function (using `functools.partial`) such that it can be applied without parameters.
+    Parameters are assumed to be `ValueBox`, or are converted thereto.
+    Wrap the resulting partial in a ValueBox.
+    """
     try:
         args, kwargs = valuebox.unbox_parameters(args, kwargs, strict=False)
     except Exception as e:
@@ -80,6 +91,16 @@ def curry_fn_valueboxed(fn, *args, **kwargs) -> valuebox.ValueBox:
 
 @optional_arg_decorator
 def stream_defaults(fn: Callable, policy: parameters.Policy = 'interact', kwargs: dict = None) -> rx.Observable:
+    """
+    Convert all parameters to streams and create an `rx.Observable` yielding results of `call_latest`.
+
+    Args:
+        fn: The function to stream.
+        policy: Policy for `parameters.defaults_to_observables`.
+        kwargs: Overrides or additions for the defaults.
+
+    Returns: `rx.Observable` containing `ValueBox` instances with results of the function.
+    """
     fn = parameters.defaults_to_observables(fn, policy=policy, kwargs=kwargs)
 
     # Pack the function to a partial
@@ -94,6 +115,12 @@ def stream_defaults(fn: Callable, policy: parameters.Policy = 'interact', kwargs
 
 
 def stream_binding(fn: Callable, *args, **kwargs: dict) -> rx.Observable:
+    """
+    Convert all arguments to streams and create an `rx.Observable` yielding results of `call_latest`.
+    This will use the 'just' policy of `parameters.defaults_to_observables`.
+
+    Returns: `rx.Observable` containing `ValueBox` instances with results of the function.
+    """
     return rxn.call_latest(
         rx.just(fn),
         *tuple(map(parameters.as_observable, args)),

@@ -6,6 +6,9 @@ import ipywidgets
 
 @dataclasses.dataclass
 class Screen:
+    """
+    A widget (container) capable of displaying function outputs and load states.
+    """
     widget: ipywidgets.VBox = None
 
     output: ipywidgets.Output = None

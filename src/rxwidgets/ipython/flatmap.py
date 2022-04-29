@@ -5,6 +5,9 @@ from rxwidgets import valuebox
 
 
 def flatten(observable: rx.Observable) -> rx.Observable:
+    """
+    Flatten the `rx.Observable` inside a `ValueBox` in the stream.
+    """
     def flatmap(x: valuebox.ValueBox) -> rx.Observable:
         try:
             # Stream should return some usable valueboxes already, eg. through @interact
