@@ -2,9 +2,11 @@
 
 This package adds functionality useful for making [ReactiveX](https://rxpy.readthedocs.io) powered [ipywidgets](https://ipywidgets.readthedocs.io/en/latest/).
 
+Note that this package is in its Beta stage and may change interfaces slightly before a 1.0 release.
+
 # Installation
 
-Run `poetry add --dev git@github.com:Ivorforce/rxwidgets.git`
+Run `poetry add git@github.com:Ivorforce/rxwidgets.git`
 
 # Usage
 
