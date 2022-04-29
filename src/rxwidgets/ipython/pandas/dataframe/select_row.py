@@ -74,7 +74,7 @@ def select_row(
             return
 
         if multi:
-            if selected[-1] is _hidden_rows:
+            if selected and selected[-1] is _hidden_rows:
                 selected = [*selected[:-1], *selected[-1]]
         else:
             if selected is _hidden_rows:
