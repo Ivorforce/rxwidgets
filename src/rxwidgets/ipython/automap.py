@@ -35,11 +35,11 @@ class Automap(rx.abc.ObservableBase):
         x = rx.just(valuebox.ValueBox(5))
         y = rx.just(valuebox.ValueBox(2))
 
-        # Voodoo
+        # Automap
         import rxwidgets.ipython as rxi
-        z = rxi.Voodoo(x) + y
+        z = rxi.Automap(x) + y
 
-        # Without Voodoo
+        # Without Automap
         import operator
         z = rxn.call_latest(x, y)(
             rx.just(valuebox.function(operator.add, strict=False))

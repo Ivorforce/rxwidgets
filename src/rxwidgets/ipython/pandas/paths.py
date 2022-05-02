@@ -58,7 +58,7 @@ def select(
         ]
         path = rc.paths.select(all_paths, scheme="Team/Project/")
 
-    Returns: A Voodoo stream of pandas rows or dataframes. Use select(...)['path'] to get
+    Returns: A stream of pandas rows or dataframes. Use Automap(select(...))['path'] to get
         a stream of just the paths.
     """
     import rxwidgets.ipython as rxi
