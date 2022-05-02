@@ -55,5 +55,5 @@ A function stream consists of these steps:
     - Create and display an `rxi.Screen`.
     - In stream: Run the function inside the screen and return results as a `ValueBox`.
     - Object in stream: `ValueBox(fn(...))`
-4. `@rxi.voodoo`
-    - If desired, pack the final stream into a compatible `rxn.VoodooObservable`
+4. `@rxi.Voodoo`
+    - If desired, pack the final stream into a `Voodoo` object. This object maps all operators to operators applied inside the stream.

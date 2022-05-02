@@ -5,7 +5,7 @@ from .load import long, LoadingError
 from .display import print_stream as print, display_stream as display
 from .stream import stream_defaults, stream_binding, apply, ConsequentialError
 from .screen import Screen
-from .voodoo import voodoo
+from .voodoo import Voodoo
 from . import parameters, widgets
 
 try:

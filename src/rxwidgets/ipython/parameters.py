@@ -8,7 +8,6 @@ from IPython.display import display
 from ipywidgets import interactive
 
 from rxwidgets.decorators import optional_arg_decorator
-from rxwidgets.rx import VoodooObservable
 
 Policy = Literal['just', 'interact']
 
@@ -28,12 +27,13 @@ def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.abc.Obs
     Returns: An observable.
     """
     from .widgets import subject_observing_widget
+    from .voodoo import Voodoo
 
     if isinstance(x, ipywidgets.ValueWidget):
         display(x)
         return subject_observing_widget(x)
 
-    if isinstance(x, VoodooObservable):
+    if isinstance(x, Voodoo):
         return x.stream
 
     if isinstance(x, rx.abc.ObservableBase):
