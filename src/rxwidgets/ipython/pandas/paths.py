@@ -82,8 +82,8 @@ def select(
         )
 
     df_stream = rxi.flatten(rxi.apply(
-        rxi.stream_binding(
-            rxi.pandas.dataframe.select_row, df_stream,
+        rxi.stream(rxi.pandas.dataframe.select_row)(
+            df_stream,
             multi=multi,
             shown_columns=['path'],
             rows=2 + 2 * len(df.columns)

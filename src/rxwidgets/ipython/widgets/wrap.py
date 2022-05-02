@@ -4,7 +4,7 @@ import ipywidgets.widgets
 from IPython.core.display_functions import display
 
 from .observe import subject_observing_widget
-from ..stream import stream_binding, apply
+from ..stream import stream, apply
 from ..flatmap import flatten
 
 
@@ -15,7 +15,7 @@ def wrap_ipywidget(Widget: Type[ipywidgets.ValueWidget]):
             display(widget)
             return subject_observing_widget(widget)
 
-        observable = stream_binding(create, *args, **kwargs)
+        observable = stream(create)(*args, **kwargs)
         observable = apply(observable)
         observable = flatten(observable)
 

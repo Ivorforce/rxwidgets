@@ -39,7 +39,7 @@ def filter(
         ```
         # If streaming inputs are desired, call the function like:
         filtered_df_stream = rxi.flatten(rxi.apply(
-            rxi.stream_binding(filter_dataframe, df_stream)
+            rxi.stream(filter_dataframe)(df_stream)
         ))
         ```
     """

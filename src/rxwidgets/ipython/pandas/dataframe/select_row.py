@@ -38,7 +38,7 @@ def select_row(
         ```
         # If streaming inputs are desired, call the function like:
         filtered_df_stream = rxi.flatten(rxi.apply(
-            rxi.stream_binding(select_row, df_stream)
+            rxi.stream(select_row)(df_stream)
         ))
         ```
     """

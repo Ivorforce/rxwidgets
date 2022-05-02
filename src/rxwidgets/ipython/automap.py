@@ -11,9 +11,12 @@ def decorate(fn: Callable) -> Callable:
     just_fn = rx.just(valuebox.function(fn, strict=False))
 
     def wrapped(*args, **kwargs):
-        args = [as_observable(x) for x in args]
-        kwargs = {key: as_observable(val) for key, val in kwargs.items()}
-        return Automap(rxn.call_latest(*args, **kwargs)(just_fn))
+        return Automap(
+            rxn.call_latest(
+                *map(as_observable, args),
+                **{key: as_observable(val, name=key) for key, val in kwargs.items()}
+            )(just_fn)
+        )
 
     return wrapped
 

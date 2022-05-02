@@ -114,15 +114,23 @@ def stream_defaults(fn: Callable, policy: parameters.Policy = 'interact', kwargs
     return observable
 
 
-def stream_binding(fn: Callable, *args, **kwargs: dict) -> rx.Observable:
+def stream(fn: Callable, policy: parameters.Policy = 'just') -> Callable:
     """
     Convert all arguments to streams and create an `rx.Observable` yielding results of `call_latest`.
     This will use the 'just' policy of `parameters.defaults_to_observables`.
 
     Returns: `rx.Observable` containing `ValueBox` instances with results of the function.
     """
-    return rxn.call_latest(
-        rx.just(fn),
-        *tuple(map(parameters.as_observable, args)),
-        **{key: parameters.as_observable(val) for key, val in kwargs.items()}
-    )(rx.just(curry_fn_valueboxed))
+    as_observable = functools.partial(parameters.as_observable, policy=policy)
+    just_fn = rx.just(fn)
+    just_curry_fn = rx.just(curry_fn_valueboxed)
+
+    @functools.wraps(fn)
+    def wrapped(*args, **kwargs) -> rx.Observable:
+        return rxn.call_latest(
+            just_fn,
+            *map(as_observable, args),
+            **{key: as_observable(val, name=key) for key, val in kwargs.items()}
+        )(just_curry_fn)
+
+    return wrapped
