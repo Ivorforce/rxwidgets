@@ -12,7 +12,7 @@ from rxwidgets.decorators import optional_arg_decorator
 Policy = Literal['just', 'interact']
 
 
-def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.abc.ObservableBase:
+def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.Observable:
     """
     Convert x to an observable, raising if impossible.
 
@@ -36,7 +36,7 @@ def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.abc.Obs
     if isinstance(x, Voodoo):
         return x.stream
 
-    if isinstance(x, rx.abc.ObservableBase):
+    if isinstance(x, rx.Observable):
         return x
 
     if policy == 'just':

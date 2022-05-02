@@ -19,7 +19,7 @@ def decorate(fn: Callable) -> Callable:
 
 
 @delegating(decorator=decorate, include_reverse=True)
-class Voodoo:
+class Voodoo(rx.abc.ObservableBase):
     """
     Represents objects _inside_ an observable: All operations to this object result in operations applied as a map to a stream.
     Inputs are interpreted as non-interactive observables, preferably containing valuebox'd streams.
@@ -43,14 +43,16 @@ class Voodoo:
         )
         ```
     """
-    def __init__(self, observable: rx.abc.ObservableBase):
+    def __init__(self, observable):
         if isinstance(observable, Voodoo):
             self.__observable__ = observable.stream
+        elif isinstance(observable, rx.Observable):
+            self.__observable__: rx.Observable = observable
         else:
-            self.__observable__ = observable
+            raise ValueError(f"Not an observable: {observable}")
 
     @property
-    def stream(self) -> rx.abc.ObservableBase:
+    def stream(self) -> rx.Observable:
         return self.__observable__
 
     def subscribe(self, *args, **kwargs) -> rx.abc.DisposableBase:

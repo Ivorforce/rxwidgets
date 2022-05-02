@@ -2,6 +2,7 @@ import reactivex as rx
 from reactivex import operators as rxo
 
 from rxwidgets import valuebox
+from rxwidgets.ipython.parameters import as_observable
 
 
 def flatten(observable: rx.Observable) -> rx.Observable:
@@ -16,4 +17,6 @@ def flatten(observable: rx.Observable) -> rx.Observable:
             # Just pass down the error box
             return rx.just(x)
 
-    return rxo.flat_map(flatmap)(observable)
+    # The as_observable is necessary so flat_map works on voodoo objects.
+    # It's a little weird to have to do it but here we are.
+    return rxo.flat_map(flatmap)(as_observable(observable))
