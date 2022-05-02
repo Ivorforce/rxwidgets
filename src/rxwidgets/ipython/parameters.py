@@ -27,14 +27,14 @@ def as_observable(x, name: str = None, *, policy: Policy = 'just') -> rx.Observa
     Returns: An observable.
     """
     from .widgets import subject_observing_widget
-    from .voodoo import Voodoo
+    from .automap import Automap
 
     if isinstance(x, ipywidgets.ValueWidget):
         display(x)
         return subject_observing_widget(x)
 
-    if isinstance(x, Voodoo):
-        return x.stream
+    if isinstance(x, Automap):
+        return x.observable
 
     if isinstance(x, rx.Observable):
         return x

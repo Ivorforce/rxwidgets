@@ -17,6 +17,6 @@ def flatten(observable: rx.Observable) -> rx.Observable:
             # Just pass down the error box
             return rx.just(x)
 
-    # The as_observable is necessary so flat_map works on voodoo objects.
+    # The as_observable is necessary so flat_map works on automap objects.
     # It's a little weird to have to do it but here we are.
     return rxo.flat_map(flatmap)(as_observable(observable))
