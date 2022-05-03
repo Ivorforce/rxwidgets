@@ -3,6 +3,14 @@ name = "rxwidgets"
 version = "0.1.6"
 description = "iPython notebooks with reactive UI - powered by RxPy and ipywidgets"
 authors = ["Lukas Tenbrink <lukas.tenbrink@gmail.com>"]
+keywords = ["ipython", "reactivex"]
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/Ivorforce/rxwidgets"
+repository = "https://github.com/Ivorforce/rxwidgets"
+include = [
+    "LICENSE",
+]
 packages = [
     { include = "rxwidgets", from = "src" },
 ]

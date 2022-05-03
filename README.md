@@ -6,7 +6,7 @@ Note that this package is in its Beta stage and may change interfaces slightly b
 
 # Installation
 
-Run `poetry add git@github.com:Ivorforce/rxwidgets.git`
+Run `poetry add rxwidgets`
 
 # Usage
 
