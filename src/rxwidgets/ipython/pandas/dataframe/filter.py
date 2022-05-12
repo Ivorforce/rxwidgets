@@ -102,7 +102,7 @@ def filter(
         widgets.append(index_textfield)
 
     if len(columns) > 0:
-        column_widgets = make_column_widgets(dataframe, columns=columns, on_change=on_change)
+        column_widgets = make_column_widgets(dataframe[columns], on_change=on_change)
         widgets.extend(column_widgets.values())
 
     if show_reset_button:
@@ -134,12 +134,10 @@ def filter(
 def make_column_widgets(
     dataframe: pd.DataFrame,
     *,
-    columns: List[str],
     on_change=Callable
 ) -> Dict[str, ipywidgets.Dropdown]:
-    missing_columns = set(columns).difference(dataframe.columns)
-    if missing_columns:
-        raise ValueError(f"Columns not in dataframe: {missing_columns}")
+    # Index is unimportant for column widgets. Duplicates make evaluation slower.
+    dataframe = dataframe.drop_duplicates(ignore_index=True)
 
     column_dropdowns: Dict[str, ipywidgets.Dropdown] = OrderedDict()
     is_updating_context = AnyContext()
@@ -172,7 +170,7 @@ def make_column_widgets(
 
         on_change(change)
 
-    for column in columns:
+    for column in dataframe.columns:
         dropdown = ipywidgets.Dropdown(
             options=[_none_selected],
             value=_none_selected,
