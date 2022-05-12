@@ -42,6 +42,16 @@ def select_row(
         ))
         ```
     """
+    min = max = None
+    if isinstance(multi, bool):
+        pass
+    elif isinstance(multi, int):
+        min = multi
+        multi = True
+    elif isinstance(multi, tuple):
+        min, max = multi
+        multi = True
+
     hidden_rows = None
     shown_rows = dataframe.index
     if max_rows is not None and len(dataframe) > max_rows + 1:
@@ -76,6 +86,10 @@ def select_row(
         if multi:
             if selected and selected[-1] is _hidden_rows:
                 selected = [*selected[:-1], *selected[-1]]
+
+            if (min is not None and len(selected) < min) or (max is not None and len(selected) > max):
+                subject.on_next(valuebox.ValueBox(DeferError(), is_error=True))
+                return
         else:
             if selected is _hidden_rows:
                 # Can't select a multi row in a single selection widget.
