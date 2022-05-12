@@ -39,6 +39,7 @@ def select(
     scheme=None,
     *,
     multi=False,
+    max_rows=500,
 ) -> rx.Observable:
     """
     Select file paths with pandas.dataframe.filter and pandas.dataframe.select_row.
@@ -48,6 +49,7 @@ def select(
         scheme: Naming scheme for attributes based from the path. Underscores (_) are
             ignored.
         multi: False to yield single rows, True to yield sub-selected dataframes.
+        max_rows: Number of rows to show in the row selector.
 
     Examples:
         # Files in a folders structure like `~/my-files/team1/project1/file1.txt`.
@@ -86,7 +88,8 @@ def select(
             df_stream,
             multi=multi,
             shown_columns=['path'],
-            rows=2 + 2 * len(df.columns)
+            rows=2 + 2 * len(df.columns),
+            max_rows=max_rows
         ),
         screen=right_screen
     ))
