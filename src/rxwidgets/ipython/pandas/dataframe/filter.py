@@ -176,8 +176,9 @@ def make_column_widgets(
             value=_none_selected,
             description=column
         )
-        dropdown.observe(on_dropdown_change)
+        dropdown.observe(on_dropdown_change, 'value')
         column_dropdowns[column] = dropdown
+
     update_dropdown_options()
 
     return column_dropdowns
