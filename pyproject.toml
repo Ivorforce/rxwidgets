@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rxwidgets"
-version = "0.1.6"
+version = "0.1.7"
 description = "iPython notebooks with reactive UI - powered by RxPy and ipywidgets"
 authors = ["Lukas Tenbrink <lukas.tenbrink@gmail.com>"]
 keywords = ["ipython", "reactivex"]
