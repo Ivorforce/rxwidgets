@@ -85,7 +85,7 @@ def select_row(
 
         if multi:
             if selected and selected[-1] is _hidden_rows:
-                selected = [*selected[:-1], *selected[-1]]
+                selected = [*selected[:-1], *hidden_rows]
 
             if (min is not None and len(selected) < min) or (max is not None and len(selected) > max):
                 subject.on_next(valuebox.ValueBox(DeferError(), is_error=True))
