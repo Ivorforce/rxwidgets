@@ -52,7 +52,7 @@ class Automap(rx.abc.ObservableBase):
         elif isinstance(observable, rx.Observable):
             self.__observable__: rx.Observable = observable
         else:
-            raise ValueError(f"Not an observable: {observable}")
+            self.__observable__: rx.Observable = rx.just(observable)
 
     @property
     def observable(self) -> rx.Observable:
